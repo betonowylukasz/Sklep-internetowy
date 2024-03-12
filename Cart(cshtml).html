@@ -1,0 +1,72 @@
+﻿@model List<CartItem>
+
+    <h2>Koszyk</h2>
+
+    @if (Model.Count > 0)
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nazwa</th>
+                <th>Ilość</th>
+                <th>Cena</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td style="text-align: center; vertical-align: middle;">
+                    @if (!string.IsNullOrEmpty(item.Article.ImagePath))
+                    {
+                    <img src="@Url.Content(" ~ /upload/" + item.Article.ImagePath)" alt="Image" style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto;" />
+                    }
+                    else
+                    {
+                    <img src="@Url.Content(" ~ /image/strefa_ruchu.jpg")" alt="Default Image" style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto;" />
+                    }
+                </td>
+                <td>@item.Article.Name</td>
+                <td>
+                    <div>
+                        <button><a asp-controller="Shop" asp-action="RemoveOne" asp-route-articleId="@item.Article.Id">-</a></button>
+                        <span>@item.Quantity</span>
+                        <button><a asp-controller="Shop" asp-action="Add" asp-route-articleId="@item.Article.Id">+</a></button>
+                    </div>
+                </td>
+                <td>@item.Article.Price zł</td>
+                <td>
+                    <div>
+                        <button><a asp-controller="Shop" asp-action="Remove" asp-route-articleId="@item.Article.Id">Usuń</a></button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>
+                    Łącznie: @Model.Sum(item => (decimal.TryParse(item.Article.Price, out var price) ? price : 0) * item.Quantity) zł
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="width:400px; margin:0 auto;">
+        <button><a asp-action="Index">Wróć do sklepu</a></button>
+        @if (User.Identity.IsAuthenticated)
+        {
+        <button><a asp-action="Order">Złóż zamówienie</a></button>
+        }
+    </div>
+    }
+    else
+    {
+    <p>Koszyk jest pusty</p>
+    }
