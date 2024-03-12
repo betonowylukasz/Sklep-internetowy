@@ -1,0 +1,82 @@
+﻿@model IEnumerable<lista10.Models.Article>
+
+@* @{
+    var userRole = Context.Request.Cookies["UserRole"];
+}
+
+<h3> Role: @userRole</h3>
+ *@
+<h1>Shop</h1>
+
+@using (Html.BeginForm("Index", "Shop", FormMethod.Get))
+{
+    <label for="categoryId">Select Category:</label>
+    @Html.DropDownList("categoryId", ViewBag.Categories as SelectList, "All Categories", new { onchange = "this.form.submit();" })
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpiryDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th style="text-align: center; vertical-align: middle;">
+                Image
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpiryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                @if (!string.IsNullOrEmpty(item.ImagePath))
+                {
+                    <img src="@Url.Content("~/upload/" + item.ImagePath)" alt="Image" style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto;" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/image/strefa_ruchu.jpg")" alt="Default Image" style="max-width: 100px; max-height: 100px; display: block; margin: 0 auto;" />
+                }
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+            <td>
+                    <a asp-controller="Shop" asp-action="AddToCart" asp-route-articleId="@item.Id" asp-route-categoryId="@ViewBag.SelectedCategory">Add to Cart</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@* <form asp-action="SetUserRole" method="post">
+    <label>
+        <input type="radio" name="role" value="Customer" @(userRole == "Customer" ? "checked" : "") /> Customer
+    </label>
+    <label>
+        <input type="radio" name="role" value="Admin" @(userRole == "Admin" ? "checked" : "") /> Admin
+    </label>
+    <button type="submit">Set Role</button>
+</form> *@
